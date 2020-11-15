@@ -6,7 +6,6 @@ object ElementApp extends App {
   val u1 = elem(' ', 1, 3)
   val c1 = elem(Array("name", "age", "city"))
   val c2 = elem(Array("Kamil", "26", "Cracow"))
-  val c3 = elem(Array("Kamil", "26", "Cracow"))
 
   println(header above (c1 beside u1 beside c2))
 }

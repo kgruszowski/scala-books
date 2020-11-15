@@ -16,9 +16,11 @@ object Rational extends App {
   println("a - 5 = " + (r1 - 5))
   println("a * 5 = " + (r1 * 5))
   println("a / 5 = " + (r1 / 5))
+  println("a > b = " + (r1 > r2))
+  println("a < b = " + (r1 < r2))
 }
 
-class Rational(n: Int, d: Int) {
+class Rational(n: Int, d: Int) extends Ordered[Rational] {
   require(d != 0)
 
   private val g = gcd(n.abs, d.abs)
@@ -28,6 +30,10 @@ class Rational(n: Int, d: Int) {
   def this(n: Int) = this(n, 1)
 
   override def toString: String = s"$numerator/$denominator"
+
+
+  override def compare(that: Rational): Int =
+    (this.numerator * that.denominator) - (that.numerator * this.denominator)
 
   def +(that: Rational): Rational =
     new Rational(numerator * that.denominator + that.numerator * denominator, denominator * that.denominator)
