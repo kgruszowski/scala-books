@@ -1,6 +1,6 @@
 package Chapter15
 
-sealed abstract class Expr{ // sealed class can be extended only by classes in the same file!
+/*sealed*/ abstract class Expr{ // sealed class can be extended only by classes in the same file!
   case class Var (name: String) extends Expr
   case class Number (num: Double) extends Expr
   case class UnOp (operator: String, arg: Expr) extends Expr
