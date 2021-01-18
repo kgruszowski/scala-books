@@ -1,0 +1,64 @@
+package Chapter19
+
+object QueueApp extends App {
+  val q = new Queue[Int](1,2,3,4,5,6,7)
+  val q1 = q.enqueue(2.0)
+
+  println(q)
+  println(q1)
+}
+
+// Not efficient
+class SlowAppendQueue[T](elems: List[T]) {
+
+  def head = elems.head
+
+  def tail = new SlowAppendQueue(elems.tail)
+
+  // take time proportional to size of the elems
+  def enqueue(x: T) = new SlowAppendQueue(elems ::: List(x))
+}
+
+// Not efficient
+// smele => elems reversed
+class SlowHeadQueue[T](smele: List[T]) {
+
+  // time proportional to size of the smele
+  def head = smele.last
+
+  def tail = new SlowHeadQueue(smele.init)
+
+  // constant time
+  def enqueue(x: T) = new SlowHeadQueue(x :: smele)
+}
+
+// +T means covariant type
+class Queue[+T] private( // private makes constructor private - it's accessible only from class body or companion objects
+                private val leading: List[T],
+                private val trailing: List[T],
+              ) {
+
+  // First approach to handle private constructor
+  def this(elems: T*) = this(elems.toList, Nil)
+
+  private def mirror =
+    if (leading.isEmpty)
+      new Queue(trailing.reverse, Nil)
+    else
+      this
+
+  def head = mirror.leading.head
+
+  def tail = {
+    val q = mirror
+    new Queue(q.leading.tail, q.trailing)
+  }
+
+  // type parameter U, "U >: T" defines T as the lower bound for U so it's required U to be supertype of T
+  def enqueue[U >: T](x: U) = new Queue[U](leading, x :: trailing) // what the heck? :o
+}
+
+object Queue {
+  // Second approach to handle private constructor, it can be invoked as Queue.apply(1,2,3) or Queue(1,2,3)
+  def apply[T](xs: T*) = new Queue[T](xs.toList, Nil)
+}
