@@ -5,7 +5,10 @@ object QueueApp extends App {
   val q1 = q.enqueue(2.0)
 
   println(q)
+  println(q.head)
   println(q1)
+  println(q1.head)
+  println(q1.tail.head)
 }
 
 // Not efficient
@@ -34,24 +37,28 @@ class SlowHeadQueue[T](smele: List[T]) {
 
 // +T means covariant type
 class Queue[+T] private( // private makes constructor private - it's accessible only from class body or companion objects
-                private val leading: List[T],
-                private val trailing: List[T],
+                private[this] var leading: List[T],
+                private[this] var trailing: List[T],
               ) {
 
   // First approach to handle private constructor
   def this(elems: T*) = this(elems.toList, Nil)
 
-  private def mirror =
+  private def mirror() =
     if (leading.isEmpty)
-      new Queue(trailing.reverse, Nil)
-    else
-      this
+      while (trailing.nonEmpty) {
+        leading = trailing.head :: leading
+        trailing = trailing.tail
+      }
 
-  def head = mirror.leading.head
+  def head: T = {
+    mirror()
+    leading.head
+  }
 
-  def tail = {
-    val q = mirror
-    new Queue(q.leading.tail, q.trailing)
+  def tail: Queue[T] = {
+    mirror()
+    new Queue(leading.tail, trailing)
   }
 
   // type parameter U, "U >: T" defines T as the lower bound for U so it's required U to be supertype of T
