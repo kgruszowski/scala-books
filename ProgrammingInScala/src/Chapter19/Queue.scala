@@ -35,7 +35,7 @@ class SlowHeadQueue[T](smele: List[T]) {
   def enqueue(x: T) = new SlowHeadQueue(x :: smele)
 }
 
-// +T means covariant type
+// +T means covariant type so T and its subclasses
 class Queue[+T] private( // private makes constructor private - it's accessible only from class body or companion objects
                 private[this] var leading: List[T],
                 private[this] var trailing: List[T],
